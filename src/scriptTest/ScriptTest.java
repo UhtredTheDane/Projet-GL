@@ -1,18 +1,23 @@
 package scriptTest;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
-
+import java.io.PrintStream;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
-import dijkstra.Graph;
 import dijkstra.Edge;
+import dijkstra.Graph;
+import dijkstra.TestGraphs;
 
 public class ScriptTest {
 	public static void main(String[] args) throws Exception {
-		Graph graphe;
+		Graph graphe = null;
+		List<Graph> list_graph = new LinkedList<Graph>();
 		int vCount = 0;
 		Set<Edge> arcs = new HashSet<>();
 
@@ -32,9 +37,8 @@ public class ScriptTest {
 				graphe = new Graph(vCount);
 				for (Edge arc : arcs)
 					graphe.addEdge(arc);
-				// print Graph
-		        graphe.printGraph();
 				vCount = 0;
+				list_graph.add(graphe);
 			}
 			else {
 				vCount++;
@@ -87,7 +91,49 @@ public class ScriptTest {
 				}
 			}
 		}
+		
+		
+	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	    PrintStream ps = new PrintStream(baos);
+	    PrintStream old = System.out;
+	    
+	    System.setOut(ps);
+		String oracle1 =
+				"Vertex	Distance	Parent Vertex\n" + 
+				"0	0.0		-1\n" + 
+				"1	5.2		0\n" + 
+				"2	10.3		0\n" + 
+				"3	11.1		1\n" + 
+				"4	19.6		3\n";
+		TestGraphs.Dijkstra(list_graph.get(0),0);
+	    String test1 = baos.toString();
+	    
+	    System.out.flush();
+	    System.setOut(old);	    
+	    
+	    if(test1.contentEquals(oracle1)) 
+	    	System.out.println("test1 pass");
+	    else {
+	    	System.out.println("test1 fail");
+	    }
 
+
+	    /*System.setOut(ps);
+		String oracle2 = "...";
+		TestGraphs.Dijkstra(list_graph.get(0),0);
+	    String test2 = baos.toString();
+	    
+	    System.out.flush();
+	    System.setOut(old);	    
+	    
+	    if(test2.contentEquals(oracle2)) 
+	    	System.out.println("test2 pass");
+	    else
+	    	System.out.println("test2 fail");	    
+	    
+	    System.out.flush();
+	    System.setOut(old);*/
+		
 		//sb.append(line);
 		br.close();
 	}
