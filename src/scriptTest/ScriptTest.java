@@ -8,6 +8,7 @@ import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 
 import dijkstra.Edge;
@@ -18,6 +19,7 @@ public class ScriptTest {
 	public static void main(String[] args) throws Exception {
 		Graph graphe = null;
 		List<Graph> list_graph = new LinkedList<Graph>();
+		List<String> list_oracle = new LinkedList<>();
 		int vCount = 0;
 		Set<Edge> arcs = new HashSet<>();
 
@@ -27,7 +29,6 @@ public class ScriptTest {
 		FileReader fr = new FileReader(testFile);
 		BufferedReader br = new BufferedReader(fr);
 
-		StringBuffer sb = new StringBuffer();
 		String line;
 
 		while((line = br.readLine()) != null)
@@ -92,49 +93,43 @@ public class ScriptTest {
 			}
 		}
 		
+		File oracleFile = new File("src/scriptTest/oracle.txt");
+
+		//Ouverture d'une lecture
+		FileReader fr2 = new FileReader(oracleFile);
+		BufferedReader br2 = new BufferedReader(fr2);
+		String line2;
+		String oracle = "";
 		
-	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		while((line2 = br2.readLine()) != null)
+		{
+			if (line2.equals("")) {
+				list_oracle.add(oracle);
+			}
+			else {
+				oracle += line2 + "\n";
+			}
+		}
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	    PrintStream ps = new PrintStream(baos);
 	    PrintStream old = System.out;
+	    int index = 0;
 	    
-	    System.setOut(ps);
-		String oracle1 =
-				"Vertex	Distance	Parent Vertex\n" + 
-				"0	0.0		-1\n" + 
-				"1	5.2		0\n" + 
-				"2	10.3		0\n" + 
-				"3	11.1		1\n" + 
-				"4	19.6		3\n";
-		TestGraphs.Dijkstra(list_graph.get(0),0);
-	    String test1 = baos.toString();
-	    
-	    System.out.flush();
-	    System.setOut(old);	    
-	    
-	    if(test1.contentEquals(oracle1)) 
-	    	System.out.println("test1 pass");
-	    else {
-	    	System.out.println("test1 fail");
+	    for(ListIterator<Graph> iterateur = list_graph.listIterator(); iterateur.hasNext() && index < list_oracle.size();) {
+	    	System.setOut(ps);
+	    	TestGraphs.Dijkstra(iterateur.next(), 0);
+	    	String test1 = baos.toString();    
+	    	
+	    	System.out.flush();
+	    	System.setOut(old);	
+	    	
+	    	if(test1.contentEquals(list_oracle.get(index))) 
+	    		System.out.println("test " + index + " pass");
+	    	else
+	    		System.out.println("test " + index + " fail");
 	    }
-
-
-	    /*System.setOut(ps);
-		String oracle2 = "...";
-		TestGraphs.Dijkstra(list_graph.get(0),0);
-	    String test2 = baos.toString();
-	    
-	    System.out.flush();
-	    System.setOut(old);	    
-	    
-	    if(test2.contentEquals(oracle2)) 
-	    	System.out.println("test2 pass");
-	    else
-	    	System.out.println("test2 fail");	    
-	    
-	    System.out.flush();
-	    System.setOut(old);*/
-		
-		//sb.append(line);
 		br.close();
 	}
+	
 }

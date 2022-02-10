@@ -1,0 +1,7 @@
+Vertex	Distance	Parent Vertex
+0	0.0		-1
+1	5.2		0
+2	10.3		0
+3	11.1		1
+4	19.6		3
+
